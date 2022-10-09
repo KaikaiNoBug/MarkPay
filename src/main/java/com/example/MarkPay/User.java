@@ -14,7 +14,7 @@ public class User {
     private String password;
     private String email;
     private AccountType accountType;
-    private Address address;
+    private String address;
 
     public String getUsername() {
         return username;
@@ -48,11 +48,11 @@ public class User {
         this.accountType = accountType;
     }
 
-    public Address getAddress() {
+    public String getAddress() {
         return address;
     }
 
-    public void setAddress(Address address) {
+    public void setAddress(String address) {
         this.address = address;
     }
 

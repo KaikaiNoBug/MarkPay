@@ -2,6 +2,7 @@
 package com.example.MarkPay;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,8 +12,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Optional;
 
+import static com.example.MarkPay.AccountType.ADMIN;
+
 @Controller
-@RequestMapping(path = "/userapi")
+@RequestMapping(path = "/user")
 public class UserController {
 
   @Autowired
@@ -22,11 +25,15 @@ public class UserController {
   public @ResponseBody String addNewUser(
       @RequestParam String username,
       @RequestParam String password,
-      @RequestParam String email) {
+      @RequestParam String email,
+      @RequestParam String address) {
     User n = new User();
     n.setUsername(username);
     n.setPassword(password);
     n.setEmail(email);
+    n.setAccountType(ADMIN);
+    n.setAddress(address);
+
     userRepository.save(n);
     return "Saved";
   }

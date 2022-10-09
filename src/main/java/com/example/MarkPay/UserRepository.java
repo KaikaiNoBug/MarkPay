@@ -1,12 +1,12 @@
 package com.example.MarkPay;
 
+import com.example.MarkPay.User;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
-
-import com.example.accessingdatamysql.User;
 
 import java.util.Optional;
 
-public interface UserRepository extends CrudRepository<User, Integer> {
+public interface UserRepository extends CrudRepository<User, Integer>, JpaRepository<User, Integer> {
 
     User findByUsername(String username);
 
