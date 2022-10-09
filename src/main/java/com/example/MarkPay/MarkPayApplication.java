@@ -9,4 +9,5 @@ public class MarkPayApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(MarkPayApplication.class, args);
 	}
+
 }

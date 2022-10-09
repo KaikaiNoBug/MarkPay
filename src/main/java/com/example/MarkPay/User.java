@@ -1,25 +1,20 @@
 package com.example.MarkPay;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
     private String username;
     private String password;
     private String email;
     private AccountType accountType;
     private Address address;
-
-    public User(String username, String password, String email, AccountType accountType, Address address) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.accountType = accountType;
-        this.address = address;
-    }
-
-    public User(String username) {
-        this.username = username;
-        this.password = "N/A";
-        this.email = "N/A";
-    }
 
     public String getUsername() {
         return username;

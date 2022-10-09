@@ -9,16 +9,6 @@ public class Address {
     private String country;
     private String zip;
 
-    public Address(String name, String line1, String line2, String city, String state, String country, String zip) {
-        this.name = name;
-        this.line1 = line1;
-        this.line2 = line2;
-        this.city = city;
-        this.state = state;
-        this.country = country;
-        this.zip = zip;
-    }
-
     public String getName() {
         return name;
     }
