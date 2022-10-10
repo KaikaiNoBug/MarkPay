@@ -12,4 +12,5 @@ public interface UserRepository extends CrudRepository<User, Integer>, JpaReposi
 
     User findByEmail(String email);
 
+    void deleteByUsername(String username);
 }

@@ -13,10 +13,9 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public List<User> listAll(){
+    public List<User> listAll() {
         return userRepository.findAll();
     }
-
 
     public void save(User user) {
         userRepository.save(user);
@@ -26,7 +25,16 @@ public class UserService {
         return userRepository.findById(id).get();
     }
 
-    public void delete(Integer id) {
+    public void deleteById(Integer id) {
         userRepository.deleteById(id);
+    }
+    public void deleteByUsername(String username) {
+        userRepository.deleteByUsername(username);
+    }
+
+    public User findByUsername(String username) {
+        System.out.println("here");
+        System.out.println(userRepository.findByUsername(username).toString());
+        return userRepository.findByUsername(username);
     }
 }
