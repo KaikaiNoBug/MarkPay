@@ -1,6 +1,16 @@
 # MarkPay
 REF: https://spring.io/guides/gs/accessing-data-mysql
 
+
+# Create DB in MySQL FIRST
+
+mysql> create database MarkPay; -- Creates the new database
+
+mysql> create user 'springuser'@'%' identified by 'ThePassword'; -- Creates the user
+
+mysql> grant all on MarkPay.* to 'springuser'@'%'; -- Gives all privileges to the new user on the newly created database
+
+
 # ADD
 `curl -X POST -H "Content-Type: application/json" -d "{\"username\":\"tony\",\"password\":\"tony123\",\"email\":\"tony@gmail.com\",\"accountType\":\"ADMIN\",\"address\":\"222 Martin St, Long island city, NY, 11101\"}" http://localhost:8080/user/add`
 
