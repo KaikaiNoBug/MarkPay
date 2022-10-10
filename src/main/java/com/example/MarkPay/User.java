@@ -1,9 +1,6 @@
 package com.example.MarkPay;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class User {
@@ -13,7 +10,7 @@ public class User {
     private String username;
     private String password;
     private String email;
-    private AccountType accountType;
+    private String accountType;
     private String address;
 
     public String getUsername() {
@@ -40,11 +37,11 @@ public class User {
         this.email = email;
     }
 
-    public AccountType getAccountType() {
+    public String getAccountType() {
         return accountType;
     }
 
-    public void setAccountType(AccountType accountType) {
+    public void setAccountType(String accountType) {
         this.accountType = accountType;
     }
 

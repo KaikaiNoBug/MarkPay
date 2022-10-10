@@ -10,10 +10,8 @@ import javax.transaction.Transactional;
 @Service
 @Transactional
 public class UserService {
-
     @Autowired
     private UserRepository userRepository;
-
 
     public List<User> listAll(){
         return userRepository.findAll();
