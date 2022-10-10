@@ -28,13 +28,12 @@ public class UserService {
     public void deleteById(Integer id) {
         userRepository.deleteById(id);
     }
+
     public void deleteByUsername(String username) {
         userRepository.deleteByUsername(username);
     }
 
     public User findByUsername(String username) {
-        System.out.println("here");
-        System.out.println(userRepository.findByUsername(username).toString());
         return userRepository.findByUsername(username);
     }
 }
