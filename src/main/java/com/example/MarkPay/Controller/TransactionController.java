@@ -57,6 +57,24 @@ public class TransactionController {
     if (transaction.getUsername() != null) {
       existTransaction.setUsername(transaction.getUsername());
     }
+    if (transaction.getOrderId() != null) {
+      existTransaction.setOrderId(transaction.getOrderId());
+    }
+    if (transaction.getTimestamp() != null) {
+      existTransaction.setTimestamp(transaction.getTimestamp());
+    }
+    if (transaction.getAmount() != null) {
+      existTransaction.setAmount(transaction.getAmount());
+    }
+    if (transaction.getPaymentStatus() != null) {
+      existTransaction.setPaymentStatus(transaction.getPaymentStatus());
+    }
+    if (transaction.getDeliveryAddress() != null) {
+      existTransaction.setDeliveryAddress(transaction.getDeliveryAddress());
+    }
+    if (transaction.getCreditCard() != null) {
+      existTransaction.setCreditCard(transaction.getCreditCard());
+    }
     transactionService.save(existTransaction);
     return new ResponseEntity<>(HttpStatus.OK);
   }
@@ -66,6 +84,24 @@ public class TransactionController {
     Transaction existTransaction = transactionService.findByUsername(username);
     if (transaction.getUsername() != null) {
       existTransaction.setUsername(transaction.getUsername());
+    }
+    if (transaction.getOrderId() != null) {
+      existTransaction.setOrderId(transaction.getOrderId());
+    }
+    if (transaction.getTimestamp() != null) {
+      existTransaction.setTimestamp(transaction.getTimestamp());
+    }
+    if (transaction.getAmount() != null) {
+      existTransaction.setAmount(transaction.getAmount());
+    }
+    if (transaction.getPaymentStatus() != null) {
+      existTransaction.setPaymentStatus(transaction.getPaymentStatus());
+    }
+    if (transaction.getDeliveryAddress() != null) {
+      existTransaction.setDeliveryAddress(transaction.getDeliveryAddress());
+    }
+    if (transaction.getCreditCard() != null) {
+      existTransaction.setCreditCard(transaction.getCreditCard());
     }
     transactionService.save(existTransaction);
     return new ResponseEntity<>(HttpStatus.OK);
