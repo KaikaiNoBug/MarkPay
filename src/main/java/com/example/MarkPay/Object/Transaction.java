@@ -1,4 +1,4 @@
-package com.example.MarkPay;
+package com.example.MarkPay.Object;
 
 import java.sql.Timestamp;
 import javax.persistence.*;
@@ -72,14 +72,14 @@ public class Transaction {
 
   @ManyToOne
   @JoinColumn(name = "creditcard_id")
-  private CreditCard creditcard;
+  private CreditCard creditCard;
 
-  public CreditCard getCreditcard() {
-    return creditcard;
+  public CreditCard getCreditCard() {
+    return creditCard;
   }
 
-  public void setCreditcard(CreditCard creditcard) {
-    this.creditcard = creditcard;
+  public void setCreditCard(CreditCard creditCard) {
+    this.creditCard = creditCard;
   }
 
 

@@ -1,4 +1,4 @@
-package com.example.MarkPay;
+package com.example.MarkPay.Object;
 
 import javax.persistence.*;
 
