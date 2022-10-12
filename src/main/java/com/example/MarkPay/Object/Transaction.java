@@ -90,4 +90,18 @@ public class Transaction {
   public void setId(Integer id) {
     this.id = id;
   }
+
+  @Override
+  public String toString() {
+    return "Transaction{" +
+        "id=" + id +
+        ", orderId=" + orderId +
+        ", timestamp=" + timestamp +
+        ", username='" + username + '\'' +
+        ", amount=" + amount +
+        ", paymentStatus='" + paymentStatus + '\'' +
+        ", deliveryAddress='" + deliveryAddress + '\'' +
+        ", creditCard=" + creditCard +
+        '}';
+  }
 }
