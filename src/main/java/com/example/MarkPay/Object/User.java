@@ -1,5 +1,7 @@
 package com.example.MarkPay.Object;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import javax.persistence.*;
 
 @Entity
@@ -11,7 +13,13 @@ public class User {
     private String password;
     private String email;
     private String accountType;
-    private String address;
+    @OneToOne(cascade = CascadeType.ALL, targetEntity = Address.class)
+    @JoinColumn(name="address_id")
+    private Address address;
+
+    @OneToOne(cascade = CascadeType.ALL, targetEntity = CreditCard.class)
+    @JoinColumn(name="creditcard_id")
+    private CreditCard creditCard;
 
     public String getUsername() {
         return username;
@@ -45,12 +53,20 @@ public class User {
         this.accountType = accountType;
     }
 
-    public String getAddress() {
+    public Address getAddress() {
         return address;
     }
 
-    public void setAddress(String address) {
+    public void setAddress(Address address) {
         this.address = address;
+    }
+
+    public CreditCard getCreditCard() {
+        return creditCard;
+    }
+
+    public void setCreditCard(CreditCard creditCard) {
+        this.creditCard = creditCard;
     }
 
     @Override

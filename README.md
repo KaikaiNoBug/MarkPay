@@ -12,9 +12,9 @@ mysql> grant all on MarkPay.* to 'springuser'@'%'; -- Gives all privileges to th
 
 
 # ADD
-`curl -X POST -H "Content-Type: application/json" -d "{\"username\":\"tony\",\"password\":\"tony123\",\"email\":\"tony@gmail.com\",\"accountType\":\"ADMIN\",\"address\":\"222 Martin St, Long island city, NY, 11101\"}" http://localhost:8080/user/add`
+`curl -X POST -H "Content-Type: application/json" -d "{\"username\":\"tony\",\"password\":\"tony123\",\"email\":\"tony@gmail.com\",\"accountType\":\"ADMIN\",\"address\":{\"name\":\"tony\",\"addressLine\":\"123 Dexter Ave N\",\"city\":\"Seattle\",\"country\":\"United States\",\"zip\":\"98109\"}, \"creditCard\": {\"username\":\"tony\",\"cardHolder\":\"tony\",\"cardNumber\":\"12345678\",\"expirationMonth\":\"1\",\"expirationYear\":\"2022\",\"securityCode\":\"1234\",\"billingAddress\":\"123 Terry AVE, Seattle, WA, 98086\"}}" http://localhost:8080/user/add`
 
-`curl -X POST -H "Content-Type: application/json" -d "{\"username\":\"kailin\",\"password\":\"kl1234\",\"email\":\"kjin@outlook.com\",\"accountType\":\"CUSTOMER\",\"address\":\"123 Terry AVE, Seattle, WA, 98086\"}" http://localhost:8080/user/add`
+`curl -X POST -H "Content-Type: application/json" -d "{\"username\":\"kailin\",\"password\":\"kl1234\",\"email\":\"kjin@outlook.com\",\"accountType\":\"CUSTOMER\"}" http://localhost:8080/user/add`
 
 `curl -X POST -H "Content-Type: application/json" -d "{\"username\":\"shibot\",\"cardHolder\":\"sbt\",\"cardNumber\":\"12345678\",\"expirationMonth\":\"1\",\"expirationYear\":\"2022\",\"securityCode\":\"1234\",\"billingAddress\":\"123 Terry AVE, Seattle, WA, 98086\"}" http://localhost:8080/credit-card/add`
 

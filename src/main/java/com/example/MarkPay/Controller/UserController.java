@@ -71,6 +71,9 @@ public class UserController {
     if (user.getAddress() != null) {
       existUser.setAddress(user.getAddress());
     }
+    if (user.getCreditCard() != null) {
+      existUser.setCreditCard(user.getCreditCard());
+    }
     userService.save(existUser);
     return new ResponseEntity<>(HttpStatus.OK);
   }
@@ -92,6 +95,9 @@ public class UserController {
     }
     if (user.getAddress() != null) {
       existUser.setAddress(user.getAddress());
+    }
+    if (user.getCreditCard() != null) {
+      existUser.setCreditCard(user.getCreditCard());
     }
     userService.save(existUser);
     return new ResponseEntity<>(HttpStatus.OK);
