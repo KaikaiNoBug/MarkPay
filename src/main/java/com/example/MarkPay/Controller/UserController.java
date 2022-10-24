@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -21,8 +22,14 @@ public class UserController {
 
   @PostMapping(path = "/add")
   public @ResponseBody String add(@RequestBody User user) {
-    userService.save(user);
-    return "Saved";
+    User existUser = userService.findByUsername(user.getUsername());
+    String msg = "Saved! ";
+    if (existUser != null) {
+      existUser.updateAll(user);
+      msg += "Existing User, info has been updated.\n";
+    }
+    userService.save(existUser);
+    return msg + user;
   }
 
   // localhost:8080/user/all
@@ -31,18 +38,6 @@ public class UserController {
     return userService.listAll();
   }
 
-  // http://localhost:8080/user/id/9
-  @GetMapping("/id/{id}")
-  public ResponseEntity<User> get(@PathVariable Integer id) {
-    try {
-      User user = userService.get(id);
-      return new ResponseEntity<User>(user, HttpStatus.OK);
-    } catch (NoSuchElementException e) {
-      return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
-    }
-  }
-
-  // http://localhost:8080/user/username/kailin
   @GetMapping(path = "/username/{username}")
   public ResponseEntity<User> get(@PathVariable String username) {
     try {
@@ -53,69 +48,70 @@ public class UserController {
     }
   }
 
-  @PutMapping("/update/id/{id}")
-  public ResponseEntity<User> update(@RequestBody User user, @PathVariable Integer id) {
-    User existUser = userService.get(id);
-    if (user.getUsername() != null) {
-      existUser.setUsername(user.getUsername());
+  // Return a list of users
+  // not in use since we don't allow duplicate username at this moment.
+  @GetMapping(path = "/username/all/{username}")
+  public ResponseEntity<List<User>> getAllUserByUsername(@PathVariable String username) {
+    try {
+      List<User> userList = new ArrayList<>();
+      userService.findAllByUsername(username).forEach(userList::add);
+      return new ResponseEntity<>(userList, HttpStatus.OK);
+    } catch (Exception e) {
+      return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    if (user.getPassword() != null) {
-      existUser.setPassword(user.getPassword());
-    }
-    if (user.getEmail() != null) {
-      existUser.setEmail(user.getEmail());
-    }
-    if (user.getAccountType() != null) {
-      existUser.setAccountType(user.getAccountType());
-    }
-    if (user.getAddress() != null) {
-      existUser.setAddress(user.getAddress());
-    }
-    if (user.getCreditCard() != null) {
-      existUser.setCreditCard(user.getCreditCard());
-    }
-    userService.save(existUser);
-    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @PutMapping("/update/username/{username}")
-  public ResponseEntity<User> update(@RequestBody User user, @PathVariable String username) {
-    User existUser = userService.findByUsername(username);
-    if (user.getUsername() != null) {
-      existUser.setUsername(user.getUsername());
+  public @ResponseBody String update(@RequestBody User user, @PathVariable String username) {
+    try {
+      User existUser = userService.findByUsername(username);
+      existUser.updateAll(user);
+      userService.save(existUser);
+      return "Updated!\n" + existUser;
+    } catch (Exception e) {
+      return "User not found!";
     }
-    if (user.getPassword() != null) {
-      existUser.setPassword(user.getPassword());
-    }
-    if (user.getEmail() != null) {
-      existUser.setEmail(user.getEmail());
-    }
-    if (user.getAccountType() != null) {
-      existUser.setAccountType(user.getAccountType());
-    }
-    if (user.getAddress() != null) {
-      existUser.setAddress(user.getAddress());
-    }
-    if (user.getCreditCard() != null) {
-      existUser.setCreditCard(user.getCreditCard());
-    }
-    userService.save(existUser);
-    return new ResponseEntity<>(HttpStatus.OK);
-  }
-
-  // Delete user by id
-  @DeleteMapping("/delete/id/{id}")
-  public @ResponseBody String delete(@PathVariable Integer id) {
-    String msg = "Deleted: " + userService.get(id).toString();
-    userService.deleteById(id);
-    return msg;
   }
 
   // Delete user by username
   @DeleteMapping("/delete/username/{username}")
   public @ResponseBody String delete(@PathVariable String username) {
-    String msg = "Deleted: " + userService.findByUsername(username);
     userService.deleteByUsername(username);
-    return msg;
+    return "Deleted! \n";
   }
+
+  // http://localhost:8080/user/id/9
+//  @GetMapping("/id/{id}")
+//  public ResponseEntity<User> get(@PathVariable Integer id) {
+//    try {
+//      User user = userService.get(id);
+//      return new ResponseEntity<User>(user, HttpStatus.OK);
+//    } catch (NoSuchElementException e) {
+//      return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+//    }
+//  }
+
+//  @PutMapping("/update/id/{id}")
+//  public ResponseEntity<User> update(@RequestBody User user, @PathVariable Integer id) {
+//    try {
+//      User existUser = userService.get(id);
+//      existUser.updateAll(user);
+//      userService.save(existUser);
+//      return new ResponseEntity<>(HttpStatus.OK);
+//    } catch (Exception e) {
+//      return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+//    }
+//  }
+
+  // Delete user by id
+//  @DeleteMapping("/delete/id/{id}")
+//  public @ResponseBody String delete(@PathVariable Integer id) {
+//    try {
+//      userService.deleteById(id);
+//      return "Deleted: \n" + userService.get(id).toString();
+//    } catch (NoSuchElementException e) {
+//      return "User not found!";
+//    }
+//  }
+
 }

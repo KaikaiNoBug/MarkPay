@@ -1,6 +1,7 @@
 package com.example.MarkPay.Object;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
 
@@ -9,7 +10,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
-    private String username;
+    private  String username;
     private String password;
     private String email;
     private String accountType;
@@ -69,10 +70,29 @@ public class User {
         this.creditCard = creditCard;
     }
 
+    public void updateAll(User newUser){
+        if (newUser.getUsername() != null) {
+            this.setUsername(newUser.getUsername());
+        }
+        if (newUser.getPassword() != null) {
+            this.setPassword(newUser.getPassword());
+        }
+        if (newUser.getEmail() != null) {
+            this.setEmail(newUser.getEmail());
+        }
+        if (newUser.getAccountType() != null) {
+            this.setAccountType(newUser.getAccountType());
+        }
+        if (newUser.getAddress() != null) {
+            this.setAddress(newUser.getAddress());
+        }
+        if (newUser.getCreditCard() != null) {
+            this.setCreditCard(newUser.getCreditCard());
+        }
+    }
     @Override
     public String toString() {
         return "User [username=" + username + ", password=" + password + ", email=" + email + ", accountType="
-                + accountType + ", address=" + address + "]";
+                + accountType + ", address=" + address + "creditCard=" + creditCard + "]";
     }
-
 }

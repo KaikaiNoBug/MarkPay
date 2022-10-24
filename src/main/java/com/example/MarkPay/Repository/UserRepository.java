@@ -4,6 +4,8 @@ import com.example.MarkPay.Object.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
+
 public interface UserRepository extends CrudRepository<User, Integer>, JpaRepository<User, Integer> {
 
     User findByUsername(String username);
@@ -11,4 +13,5 @@ public interface UserRepository extends CrudRepository<User, Integer>, JpaReposi
     User findByEmail(String email);
 
     void deleteByUsername(String username);
+
 }
