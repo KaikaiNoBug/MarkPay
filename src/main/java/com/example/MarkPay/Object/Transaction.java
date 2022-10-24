@@ -1,5 +1,7 @@
 package com.example.MarkPay.Object;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.sql.Timestamp;
 import javax.persistence.*;
 
@@ -10,8 +12,11 @@ public class Transaction {
   @Column(name = "id", nullable = false)
   private Integer id;
 
-  private Long orderId;
+//  private Long orderId;
 
+
+  @Column(name = "timestamp")
+  @CreationTimestamp
   private Timestamp timestamp;
 
   private String username;
@@ -20,15 +25,20 @@ public class Transaction {
 
   private String paymentStatus;
 
-  private String deliveryAddress;
+  @OneToOne
+  @JoinColumn(name = "delivery_address_id")
+  private Address deliveryAddress;
 
-  public Long getOrderId() {
-    return orderId;
-  }
-
-  public void setOrderId(Long orderId) {
-    this.orderId = orderId;
-  }
+//  public Long getOrderId() {
+//    return orderId;
+//  }
+//
+//  public void setOrderId(Long orderId) {
+//    this.orderId = orderId;
+//  }
+  @OneToOne
+  @JoinColumn(name = "creditcard_id")
+  private CreditCard creditCard;
 
   public Timestamp getTimestamp() {
     return timestamp;
@@ -62,17 +72,14 @@ public class Transaction {
     this.paymentStatus = paymentStatus;
   }
 
-  public String getDeliveryAddress() {
+  public Address getDeliveryAddress() {
     return deliveryAddress;
   }
 
-  public void setDeliveryAddress(String deliveryAddress) {
+  public void setDeliveryAddress(Address deliveryAddress) {
     this.deliveryAddress = deliveryAddress;
   }
 
-  @ManyToOne
-  @JoinColumn(name = "creditcard_id")
-  private CreditCard creditCard;
 
   public CreditCard getCreditCard() {
     return creditCard;
@@ -81,7 +88,6 @@ public class Transaction {
   public void setCreditCard(CreditCard creditCard) {
     this.creditCard = creditCard;
   }
-
 
   public Integer getId() {
     return id;
@@ -95,7 +101,7 @@ public class Transaction {
   public String toString() {
     return "Transaction{" +
         "id=" + id +
-        ", orderId=" + orderId +
+//        ", orderId=" + orderId +
         ", timestamp=" + timestamp +
         ", username='" + username + '\'' +
         ", amount=" + amount +

@@ -1,6 +1,7 @@
 package com.example.MarkPay.Controller;
 
 import com.example.MarkPay.Object.Transaction;
+import com.example.MarkPay.Object.User;
 import com.example.MarkPay.Service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -51,15 +53,36 @@ public class TransactionController {
     }
   }
 
+  @GetMapping(path = "/all/{username}")
+  public ResponseEntity<List<Transaction>> getAllTransactionByUsername(@PathVariable String username) {
+    try {
+      List<Transaction> transactionList = new ArrayList<>(transactionService.findAllByUsername(username));
+      return new ResponseEntity<>(transactionList, HttpStatus.OK);
+    } catch (Exception e) {
+      return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @GetMapping(path = "/balance/{username}")
+  public ResponseEntity<Float> getBalanceByUsername(@PathVariable String username) {
+    try {
+      List<Transaction> transactionList = new ArrayList<>(transactionService.findAllByUsername(username));
+      final Float sum = transactionList.stream().map(Transaction::getAmount).reduce(0.0f, Float::sum);
+      return new ResponseEntity<>(sum, HttpStatus.OK);
+    } catch (Exception e) {
+      return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   @PutMapping("/update/id/{id}")
   public ResponseEntity<Transaction> update(@RequestBody Transaction transaction, @PathVariable Integer id) {
     Transaction existTransaction = transactionService.get(id);
     if (transaction.getUsername() != null) {
       existTransaction.setUsername(transaction.getUsername());
     }
-    if (transaction.getOrderId() != null) {
-      existTransaction.setOrderId(transaction.getOrderId());
-    }
+//    if (transaction.getOrderId() != null) {
+//      existTransaction.setOrderId(transaction.getOrderId());
+//    }
     if (transaction.getTimestamp() != null) {
       existTransaction.setTimestamp(transaction.getTimestamp());
     }
@@ -85,9 +108,9 @@ public class TransactionController {
     if (transaction.getUsername() != null) {
       existTransaction.setUsername(transaction.getUsername());
     }
-    if (transaction.getOrderId() != null) {
-      existTransaction.setOrderId(transaction.getOrderId());
-    }
+//    if (transaction.getOrderId() != null) {
+//      existTransaction.setOrderId(transaction.getOrderId());
+//    }
     if (transaction.getTimestamp() != null) {
       existTransaction.setTimestamp(transaction.getTimestamp());
     }
