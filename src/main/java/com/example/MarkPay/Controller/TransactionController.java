@@ -150,6 +150,7 @@ public class TransactionController {
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
     existTransaction.setCreditCard(existCreditCard);
+    transactionService.save(existTransaction);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
@@ -161,6 +162,18 @@ public class TransactionController {
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
     existTransaction.setDeliveryAddress(existAddress);
+    transactionService.save(existTransaction);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @PutMapping("/update/status/{transactionId}/{status}")
+  public ResponseEntity<Transaction> updateStatus(@PathVariable Integer transactionId, @PathVariable String status) {
+    Transaction existTransaction = transactionService.get(transactionId);
+    if (existTransaction == null) {
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    existTransaction.setPaymentStatus(status);
+    transactionService.save(existTransaction);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
