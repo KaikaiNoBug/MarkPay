@@ -14,7 +14,7 @@ public class User {
     private String password;
     private String email;
     private String accountType;
-    @OneToOne(cascade = CascadeType.ALL, targetEntity = Address.class)
+    @ManyToOne(cascade = CascadeType.ALL, targetEntity = Address.class)
     @JoinColumn(name="address_id")
     private Address address;
 

@@ -22,14 +22,16 @@ public class UserController {
 
   @PostMapping(path = "/add")
   public @ResponseBody String add(@RequestBody User user) {
-    User existUser = userService.findByUsername(user.getUsername());
     String msg = "Saved! ";
-    if (existUser != null) {
+    if (userService.findByUsername(user.getUsername()) != null) {
+      User existUser = userService.findByUsername(user.getUsername());
       existUser.updateAll(user);
+      userService.save(existUser);
       msg += "Existing User, info has been updated.\n";
+      return msg + user;
     }
-    userService.save(existUser);
-    return msg + user;
+    userService.save(user);
+    return msg;
   }
 
   // localhost:8080/user/all

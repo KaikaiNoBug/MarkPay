@@ -12,9 +12,6 @@ public class Transaction {
   @Column(name = "id", nullable = false)
   private Integer id;
 
-//  private Long orderId;
-
-
   @Column(name = "timestamp")
   @CreationTimestamp
   private Timestamp timestamp;
@@ -25,19 +22,12 @@ public class Transaction {
 
   private String paymentStatus;
 
-  @OneToOne
-  @JoinColumn(name = "delivery_address_id")
+  @OneToOne(cascade = CascadeType.ALL, targetEntity = Address.class)
+  @JoinColumn(name="address_id")
   private Address deliveryAddress;
 
-//  public Long getOrderId() {
-//    return orderId;
-//  }
-//
-//  public void setOrderId(Long orderId) {
-//    this.orderId = orderId;
-//  }
-  @OneToOne
-  @JoinColumn(name = "creditcard_id")
+  @OneToOne(cascade = CascadeType.ALL, targetEntity = CreditCard.class)
+  @JoinColumn(name="creditcard_id")
   private CreditCard creditCard;
 
   public Timestamp getTimestamp() {
@@ -101,7 +91,6 @@ public class Transaction {
   public String toString() {
     return "Transaction{" +
         "id=" + id +
-//        ", orderId=" + orderId +
         ", timestamp=" + timestamp +
         ", username='" + username + '\'' +
         ", amount=" + amount +

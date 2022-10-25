@@ -1,8 +1,13 @@
 package com.example.MarkPay.Controller;
 
+import com.example.MarkPay.Object.Address;
+import com.example.MarkPay.Object.CreditCard;
 import com.example.MarkPay.Object.Transaction;
 import com.example.MarkPay.Object.User;
+import com.example.MarkPay.Service.AddressService;
+import com.example.MarkPay.Service.CreditCardService;
 import com.example.MarkPay.Service.TransactionService;
+import com.example.MarkPay.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +24,21 @@ public class TransactionController {
   @Autowired
   private TransactionService transactionService;
 
+  @Autowired
+  private CreditCardService creditCardService;
+
+  @Autowired
+  private AddressService addressService;
+
+  @Autowired
+  private UserService userService;
+
   @PostMapping(path = "/add")
   public @ResponseBody String add(@RequestBody Transaction transaction) {
+    String userName = transaction.getUsername();
+    if (userService.findByUsername(userName) == null) {
+      return "User not found";
+    }
     transactionService.save(transaction);
     return "Saved";
   }
@@ -80,9 +98,6 @@ public class TransactionController {
     if (transaction.getUsername() != null) {
       existTransaction.setUsername(transaction.getUsername());
     }
-//    if (transaction.getOrderId() != null) {
-//      existTransaction.setOrderId(transaction.getOrderId());
-//    }
     if (transaction.getTimestamp() != null) {
       existTransaction.setTimestamp(transaction.getTimestamp());
     }
@@ -108,9 +123,6 @@ public class TransactionController {
     if (transaction.getUsername() != null) {
       existTransaction.setUsername(transaction.getUsername());
     }
-//    if (transaction.getOrderId() != null) {
-//      existTransaction.setOrderId(transaction.getOrderId());
-//    }
     if (transaction.getTimestamp() != null) {
       existTransaction.setTimestamp(transaction.getTimestamp());
     }
@@ -127,6 +139,28 @@ public class TransactionController {
       existTransaction.setCreditCard(transaction.getCreditCard());
     }
     transactionService.save(existTransaction);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @PutMapping("/update/creditCard/{transactionId}/{creditCardId}")
+  public ResponseEntity<Transaction> updateCreditCard(@PathVariable Integer transactionId, @PathVariable Integer creditCardId) {
+    Transaction existTransaction = transactionService.get(transactionId);
+    CreditCard existCreditCard = creditCardService.get(creditCardId);
+    if (existTransaction == null || existCreditCard == null) {
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    existTransaction.setCreditCard(existCreditCard);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @PutMapping("/update/address/{transactionId}/{addressId}")
+  public ResponseEntity<Transaction> updateAddress(@PathVariable Integer transactionId, @PathVariable Integer addressId) {
+    Transaction existTransaction = transactionService.get(transactionId);
+    Address existAddress = addressService.get(addressId);
+    if (existTransaction == null || existAddress == null) {
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    existTransaction.setDeliveryAddress(existAddress);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
