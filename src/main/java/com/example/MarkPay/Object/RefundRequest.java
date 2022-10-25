@@ -1,11 +1,9 @@
 package com.example.MarkPay.Object;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.sql.Timestamp;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class RefundRequest {
@@ -14,13 +12,15 @@ public class RefundRequest {
   @Column(name = "id", nullable = false)
   private Integer id;
 
-  private Long orderId;
-
   private Timestamp timestamp;
 
   private String username;
 
   private String status;
+
+  @OneToOne(cascade = CascadeType.ALL, targetEntity = Transaction.class)
+  @JoinColumn(name="transaction_id")
+  private Transaction transaction;
 
   public Integer getId() {
     return id;
@@ -28,14 +28,6 @@ public class RefundRequest {
 
   public void setId(Integer id) {
     this.id = id;
-  }
-
-  public Long getOrderId() {
-    return orderId;
-  }
-
-  public void setOrderId(Long orderId) {
-    this.orderId = orderId;
   }
 
   public Timestamp getTimestamp() {
@@ -62,11 +54,18 @@ public class RefundRequest {
     this.status = status;
   }
 
+  public Transaction getTransaction() {
+    return transaction;
+  }
+
+  public void setTransaction(Transaction transaction) {
+    this.transaction = transaction;
+  }
+
   @Override
   public String toString() {
     return "RefundRequest{" +
         "id=" + id +
-        ", orderId=" + orderId +
         ", timestamp=" + timestamp +
         ", username='" + username + '\'' +
         ", status='" + status + '\'' +

@@ -1,7 +1,11 @@
 package com.example.MarkPay.Controller;
 
+import com.example.MarkPay.Object.Address;
+import com.example.MarkPay.Object.CreditCard;
 import com.example.MarkPay.Object.Transaction;
 import com.example.MarkPay.Object.User;
+import com.example.MarkPay.Service.AddressService;
+import com.example.MarkPay.Service.CreditCardService;
 import com.example.MarkPay.Service.TransactionService;
 import com.example.MarkPay.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +25,12 @@ public class TransactionController {
   private TransactionService transactionService;
   @Autowired
   private UserService userService;
+
+  @Autowired
+  private CreditCardService creditCardService;
+
+  @Autowired
+  private AddressService addressService;
 
   @PostMapping(path = "/add")
   public @ResponseBody String add(@RequestBody Transaction transaction) {
@@ -89,7 +99,8 @@ public class TransactionController {
     }
   }
 
-  @GetMapping(path = "/revenue/{username}")
+@GetMapping(path="/revenue/{username}")
+
   public ResponseEntity<Float> getRevenueByUsername(@PathVariable String username) {
     try {
       List<Transaction> transactionList = new ArrayList<>(transactionService.findAllByUsername(username));
@@ -100,8 +111,6 @@ public class TransactionController {
       return new ResponseEntity<>((float) Math.round(sum * 100) / 100, HttpStatus.OK);
     } catch (Exception e) {
       return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
 
   @GetMapping(path = "/balance")
   public ResponseEntity<Float> getTotalBalance() {
@@ -145,7 +154,7 @@ public class TransactionController {
     }
   }
 
-  @GetMapping(path = "/receivable/{username}")
+@GetMapping(path="/receivable/{username}")
   public ResponseEntity<Float> getReceivableByUsername(@PathVariable String username) {
     try {
       List<Transaction> transactionList = new ArrayList<>(transactionService.findAllByUsername(username));
@@ -157,11 +166,55 @@ public class TransactionController {
     } catch (Exception e) {
       return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+  @PutMapping("/update/creditCard/{transactionId}/{creditCardId}")
+  public ResponseEntity<Transaction> updateCreditCard(@PathVariable Integer transactionId,
+      @PathVariable Integer creditCardId) {
+    Transaction existTransaction = transactionService.get(transactionId);
+    CreditCard existCreditCard = creditCardService.get(creditCardId);
+    if (existTransaction == null || existCreditCard == null) {
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    existTransaction.setCreditCard(existCreditCard);
+    transactionService.save(existTransaction);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @PutMapping("/update/id/{id}")
-  public ResponseEntity<Transaction> update(@RequestBody Transaction transaction, @PathVariable Integer id) {
-    Transaction existTransaction = transactionService.get(id);
+  @PutMapping("/update/address/{transactionId}/{addressId}")
+  public ResponseEntity<Transaction> updateAddress(@PathVariable Integer transactionId,
+      @PathVariable Integer addressId) {
+    Transaction existTransaction = transactionService.get(transactionId);
+    Address existAddress = addressService.get(addressId);
+    if (existTransaction == null || existAddress == null) {
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    existTransaction.setDeliveryAddress(existAddress);
+    transactionService.save(existTransaction);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @PutMapping("/update/status/{transactionId}/{status}")
+  public ResponseEntity<Transaction> updateStatus(@PathVariable Integer transactionId, @PathVariable String status) {
+    Transaction existTransaction = transactionService.get(transactionId);
+    if (existTransaction == null) {
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    existTransaction.setPaymentStatus(status);
+    transactionService.save(existTransaction);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  // Delete user by id
+  @DeleteMapping("/delete/id/{transactionId}")
+  public @ResponseBody String delete(@PathVariable Integer transactionId) {
+    String msg = "Deleted: " + transactionService.get(transactionId).toString();
+    transactionService.deleteById(transactionId);
+    return msg;
+  }
+
+  @PutMapping("/update/id/{transactionId}")
+  public ResponseEntity<Transaction> update(@RequestBody Transaction transaction, @PathVariable Integer transactionId) {
+    Transaction existTransaction = transactionService.get(transactionId);
     existTransaction.updateAll(transaction);
     transactionService.save(existTransaction);
     return new ResponseEntity<>(HttpStatus.OK);
