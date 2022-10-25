@@ -23,16 +23,11 @@ public class Transaction {
   private String paymentStatus;
 
   @OneToOne(cascade = CascadeType.ALL, targetEntity = Address.class)
-  @JoinColumn(name="address_id")
+  @JoinColumn(name = "address_id")
   private Address deliveryAddress;
 
-<<<<<<< HEAD
-  @OneToOne
-  @JoinColumn(name = "creditcard_id")
-=======
   @OneToOne(cascade = CascadeType.ALL, targetEntity = CreditCard.class)
-  @JoinColumn(name="creditcard_id")
->>>>>>> b012d2b501536baf40e642db986ab0bb37678ef7
+  @JoinColumn(name = "creditcard_id")
   private CreditCard creditCard;
 
   public Timestamp getTimestamp() {
@@ -75,7 +70,6 @@ public class Transaction {
     this.deliveryAddress = deliveryAddress;
   }
 
-
   public CreditCard getCreditCard() {
     return creditCard;
   }
@@ -92,7 +86,7 @@ public class Transaction {
     this.id = id;
   }
 
-  public void updateAll(Transaction transaction){
+  public void updateAll(Transaction transaction) {
     if (transaction.getUsername() != null) {
       this.setUsername(transaction.getUsername());
     }

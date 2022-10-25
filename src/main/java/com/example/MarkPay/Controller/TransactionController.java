@@ -167,7 +167,7 @@ public class TransactionController {
           return new ResponseEntity<>((float) Math.round(sum * 100) / 100, HttpStatus.OK);
         } catch (Exception e) {
           return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        }}
 
   @PutMapping("/update/creditCard/{transactionId}/{creditCardId}")
   public ResponseEntity<Transaction> updateCreditCard(@PathVariable Integer transactionId,
