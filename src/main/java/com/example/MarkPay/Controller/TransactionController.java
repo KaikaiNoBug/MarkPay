@@ -99,7 +99,7 @@ public class TransactionController {
     }
   }
 
-@GetMapping(path="/revenue/{username}")
+  @GetMapping(path = "/revenue/{username}")
 
   public ResponseEntity<Float> getRevenueByUsername(@PathVariable String username) {
     try {
@@ -111,6 +111,8 @@ public class TransactionController {
       return new ResponseEntity<>((float) Math.round(sum * 100) / 100, HttpStatus.OK);
     } catch (Exception e) {
       return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 
   @GetMapping(path = "/balance")
   public ResponseEntity<Float> getTotalBalance() {
@@ -154,18 +156,18 @@ public class TransactionController {
     }
   }
 
-@GetMapping(path="/receivable/{username}")
-  public ResponseEntity<Float> getReceivableByUsername(@PathVariable String username) {
-    try {
-      List<Transaction> transactionList = new ArrayList<>(transactionService.findAllByUsername(username));
-      final Float sum = transactionList.stream()
-          .filter(Transaction -> Transaction.getPaymentStatus().equalsIgnoreCase("paid"))
-          .map(Transaction::getAmount)
-          .reduce(0.0f, Float::sum);
-      return new ResponseEntity<>((float) Math.round(sum * 100) / 100, HttpStatus.OK);
-    } catch (Exception e) {
-      return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+  @GetMapping(path="/receivable/{username}")
+      public ResponseEntity<Float> getReceivableByUsername(@PathVariable String username) {
+        try {
+          List<Transaction> transactionList = new ArrayList<>(transactionService.findAllByUsername(username));
+          final Float sum = transactionList.stream()
+                  .filter(Transaction -> Transaction.getPaymentStatus().equalsIgnoreCase("paid"))
+                  .map(Transaction::getAmount)
+                  .reduce(0.0f, Float::sum);
+          return new ResponseEntity<>((float) Math.round(sum * 100) / 100, HttpStatus.OK);
+        } catch (Exception e) {
+          return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
   @PutMapping("/update/creditCard/{transactionId}/{creditCardId}")
   public ResponseEntity<Transaction> updateCreditCard(@PathVariable Integer transactionId,
