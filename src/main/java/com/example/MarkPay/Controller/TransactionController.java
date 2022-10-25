@@ -3,6 +3,7 @@ package com.example.MarkPay.Controller;
 import com.example.MarkPay.Object.Transaction;
 import com.example.MarkPay.Object.User;
 import com.example.MarkPay.Service.TransactionService;
+import com.example.MarkPay.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +19,22 @@ import java.util.NoSuchElementException;
 public class TransactionController {
   @Autowired
   private TransactionService transactionService;
+  @Autowired
+  private UserService userService;
 
   @PostMapping(path = "/add")
   public @ResponseBody String add(@RequestBody Transaction transaction) {
+    String msg = "Transaction Saved! ";
+    if (userService.findByUsername(transaction.getUsername()) == null) {
+      User user = new User();
+      user.setUsername(transaction.getUsername());
+      user.setAccountType("CUSTOMER");
+      userService.save(user);
+      msg += "New user created!\n";
+    }
+    transaction.setAmount((float) Math.round(transaction.getAmount() * 100) / 100);
     transactionService.save(transaction);
-    return "Saved";
+    return msg;
   }
 
   // localhost:8080/transaction/all
@@ -36,9 +48,9 @@ public class TransactionController {
   public ResponseEntity<Transaction> get(@PathVariable Integer id) {
     try {
       Transaction transaction = transactionService.get(id);
-      return new ResponseEntity<Transaction>(transaction, HttpStatus.OK);
+      return new ResponseEntity<>(transaction, HttpStatus.OK);
     } catch (NoSuchElementException e) {
-      return new ResponseEntity<Transaction>(HttpStatus.NOT_FOUND);
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
   }
 
@@ -47,9 +59,9 @@ public class TransactionController {
   public ResponseEntity<Transaction> get(@PathVariable String username) {
     try {
       Transaction transaction = transactionService.findByUsername(username);
-      return new ResponseEntity<Transaction>(transaction, HttpStatus.OK);
+      return new ResponseEntity<>(transaction, HttpStatus.OK);
     } catch (NoSuchElementException e) {
-      return new ResponseEntity<Transaction>(HttpStatus.NOT_FOUND);
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
   }
 
@@ -63,12 +75,85 @@ public class TransactionController {
     }
   }
 
+  // Revenue = Balance(Posted) + Receivable(Paid)
+  @GetMapping(path = "/revenue")
+  public ResponseEntity<Float> getTotalRevenue() {
+    try {
+      List<Transaction> transactionList = new ArrayList<>(transactionService.listAll());
+      final Float sum = transactionList.stream()
+          .map(Transaction::getAmount)
+          .reduce(0.0f, Float::sum);
+      return new ResponseEntity<>((float) Math.round(sum * 100) / 100, HttpStatus.OK);
+    } catch (Exception e) {
+      return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @GetMapping(path = "/revenue/{username}")
+  public ResponseEntity<Float> getRevenueByUsername(@PathVariable String username) {
+    try {
+      List<Transaction> transactionList = new ArrayList<>(transactionService.findAllByUsername(username));
+      final Float sum = transactionList.stream()
+          .map(Transaction::getAmount)
+          .reduce(0.0f, Float::sum);
+
+      return new ResponseEntity<>((float) Math.round(sum * 100) / 100, HttpStatus.OK);
+    } catch (Exception e) {
+      return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @GetMapping(path = "/balance")
+  public ResponseEntity<Float> getTotalBalance() {
+    try {
+      List<Transaction> transactionList = new ArrayList<>(transactionService.listAll());
+      final Float sum = transactionList.stream()
+          .filter(Transaction -> Transaction.getPaymentStatus().equalsIgnoreCase("posted"))
+          .map(Transaction::getAmount)
+          .reduce(0.0f, Float::sum);
+      return new ResponseEntity<>((float) Math.round(sum * 100) / 100, HttpStatus.OK);
+    } catch (Exception e) {
+      return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   @GetMapping(path = "/balance/{username}")
   public ResponseEntity<Float> getBalanceByUsername(@PathVariable String username) {
     try {
       List<Transaction> transactionList = new ArrayList<>(transactionService.findAllByUsername(username));
-      final Float sum = transactionList.stream().map(Transaction::getAmount).reduce(0.0f, Float::sum);
-      return new ResponseEntity<>(sum, HttpStatus.OK);
+      final Float sum = transactionList.stream()
+          .filter(Transaction -> Transaction.getPaymentStatus().equalsIgnoreCase("posted"))
+          .map(Transaction::getAmount)
+          .reduce(0.0f, Float::sum);
+      return new ResponseEntity<>((float) Math.round(sum * 100) / 100, HttpStatus.OK);
+    } catch (Exception e) {
+      return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @GetMapping(path = "/receivable")
+  public ResponseEntity<Float> getTotalReceivable() {
+    try {
+      List<Transaction> transactionList = new ArrayList<>(transactionService.listAll());
+      final Float sum = transactionList.stream()
+          .filter(Transaction -> Transaction.getPaymentStatus().equalsIgnoreCase("paid"))
+          .map(Transaction::getAmount)
+          .reduce(0.0f, Float::sum);
+      return new ResponseEntity<>((float) Math.round(sum * 100) / 100, HttpStatus.OK);
+    } catch (Exception e) {
+      return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @GetMapping(path = "/receivable/{username}")
+  public ResponseEntity<Float> getReceivableByUsername(@PathVariable String username) {
+    try {
+      List<Transaction> transactionList = new ArrayList<>(transactionService.findAllByUsername(username));
+      final Float sum = transactionList.stream()
+          .filter(Transaction -> Transaction.getPaymentStatus().equalsIgnoreCase("paid"))
+          .map(Transaction::getAmount)
+          .reduce(0.0f, Float::sum);
+      return new ResponseEntity<>((float) Math.round(sum * 100) / 100, HttpStatus.OK);
     } catch (Exception e) {
       return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -77,72 +162,8 @@ public class TransactionController {
   @PutMapping("/update/id/{id}")
   public ResponseEntity<Transaction> update(@RequestBody Transaction transaction, @PathVariable Integer id) {
     Transaction existTransaction = transactionService.get(id);
-    if (transaction.getUsername() != null) {
-      existTransaction.setUsername(transaction.getUsername());
-    }
-//    if (transaction.getOrderId() != null) {
-//      existTransaction.setOrderId(transaction.getOrderId());
-//    }
-    if (transaction.getTimestamp() != null) {
-      existTransaction.setTimestamp(transaction.getTimestamp());
-    }
-    if (transaction.getAmount() != null) {
-      existTransaction.setAmount(transaction.getAmount());
-    }
-    if (transaction.getPaymentStatus() != null) {
-      existTransaction.setPaymentStatus(transaction.getPaymentStatus());
-    }
-    if (transaction.getDeliveryAddress() != null) {
-      existTransaction.setDeliveryAddress(transaction.getDeliveryAddress());
-    }
-    if (transaction.getCreditCard() != null) {
-      existTransaction.setCreditCard(transaction.getCreditCard());
-    }
+    existTransaction.updateAll(transaction);
     transactionService.save(existTransaction);
     return new ResponseEntity<>(HttpStatus.OK);
-  }
-
-  @PutMapping("/update/username/{username}")
-  public ResponseEntity<Transaction> update(@RequestBody Transaction transaction, @PathVariable String username) {
-    Transaction existTransaction = transactionService.findByUsername(username);
-    if (transaction.getUsername() != null) {
-      existTransaction.setUsername(transaction.getUsername());
-    }
-//    if (transaction.getOrderId() != null) {
-//      existTransaction.setOrderId(transaction.getOrderId());
-//    }
-    if (transaction.getTimestamp() != null) {
-      existTransaction.setTimestamp(transaction.getTimestamp());
-    }
-    if (transaction.getAmount() != null) {
-      existTransaction.setAmount(transaction.getAmount());
-    }
-    if (transaction.getPaymentStatus() != null) {
-      existTransaction.setPaymentStatus(transaction.getPaymentStatus());
-    }
-    if (transaction.getDeliveryAddress() != null) {
-      existTransaction.setDeliveryAddress(transaction.getDeliveryAddress());
-    }
-    if (transaction.getCreditCard() != null) {
-      existTransaction.setCreditCard(transaction.getCreditCard());
-    }
-    transactionService.save(existTransaction);
-    return new ResponseEntity<>(HttpStatus.OK);
-  }
-
-  // Delete user by id
-  @DeleteMapping("/delete/id/{id}")
-  public @ResponseBody String delete(@PathVariable Integer id) {
-    String msg = "Deleted: " + transactionService.get(id).toString();
-    transactionService.deleteById(id);
-    return msg;
-  }
-
-  // Delete user by username
-  @DeleteMapping("/delete/username/{username}")
-  public @ResponseBody String delete(@PathVariable String username) {
-    String msg = "Deleted: " + transactionService.findByUsername(username);
-    transactionService.deleteByUsername(username);
-    return msg;
   }
 }

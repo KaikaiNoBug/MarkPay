@@ -29,13 +29,6 @@ public class Transaction {
   @JoinColumn(name = "delivery_address_id")
   private Address deliveryAddress;
 
-//  public Long getOrderId() {
-//    return orderId;
-//  }
-//
-//  public void setOrderId(Long orderId) {
-//    this.orderId = orderId;
-//  }
   @OneToOne
   @JoinColumn(name = "creditcard_id")
   private CreditCard creditCard;
@@ -97,11 +90,31 @@ public class Transaction {
     this.id = id;
   }
 
+  public void updateAll(Transaction transaction){
+    if (transaction.getUsername() != null) {
+      this.setUsername(transaction.getUsername());
+    }
+    if (transaction.getTimestamp() != null) {
+      this.setTimestamp(transaction.getTimestamp());
+    }
+    if (transaction.getAmount() != null) {
+      this.setAmount(transaction.getAmount());
+    }
+    if (transaction.getPaymentStatus() != null) {
+      this.setPaymentStatus(transaction.getPaymentStatus());
+    }
+    if (transaction.getDeliveryAddress() != null) {
+      this.setDeliveryAddress(transaction.getDeliveryAddress());
+    }
+    if (transaction.getCreditCard() != null) {
+      this.setCreditCard(transaction.getCreditCard());
+    }
+  }
+
   @Override
   public String toString() {
     return "Transaction{" +
         "id=" + id +
-//        ", orderId=" + orderId +
         ", timestamp=" + timestamp +
         ", username='" + username + '\'' +
         ", amount=" + amount +

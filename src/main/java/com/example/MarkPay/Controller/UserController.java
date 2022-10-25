@@ -22,13 +22,14 @@ public class UserController {
 
   @PostMapping(path = "/add")
   public @ResponseBody String add(@RequestBody User user) {
-    User existUser = userService.findByUsername(user.getUsername());
-    String msg = "Saved! ";
-    if (existUser != null) {
+    String msg = "Saved!\n ";
+    if (userService.findByUsername(user.getUsername()) != null) {
+      User existUser = userService.findByUsername(user.getUsername());
       existUser.updateAll(user);
+      userService.save(existUser);
       msg += "Existing User, info has been updated.\n";
     }
-    userService.save(existUser);
+    userService.save(user);
     return msg + user;
   }
 
@@ -79,39 +80,4 @@ public class UserController {
     userService.deleteByUsername(username);
     return "Deleted! \n";
   }
-
-  // http://localhost:8080/user/id/9
-//  @GetMapping("/id/{id}")
-//  public ResponseEntity<User> get(@PathVariable Integer id) {
-//    try {
-//      User user = userService.get(id);
-//      return new ResponseEntity<User>(user, HttpStatus.OK);
-//    } catch (NoSuchElementException e) {
-//      return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
-//    }
-//  }
-
-//  @PutMapping("/update/id/{id}")
-//  public ResponseEntity<User> update(@RequestBody User user, @PathVariable Integer id) {
-//    try {
-//      User existUser = userService.get(id);
-//      existUser.updateAll(user);
-//      userService.save(existUser);
-//      return new ResponseEntity<>(HttpStatus.OK);
-//    } catch (Exception e) {
-//      return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
-//  }
-
-  // Delete user by id
-//  @DeleteMapping("/delete/id/{id}")
-//  public @ResponseBody String delete(@PathVariable Integer id) {
-//    try {
-//      userService.deleteById(id);
-//      return "Deleted: \n" + userService.get(id).toString();
-//    } catch (NoSuchElementException e) {
-//      return "User not found!";
-//    }
-//  }
-
 }
